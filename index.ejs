@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Weather forecast</h1>
+        <form action="/" method="GET" class="search-form">
+            <input type="text" name="city" placeholder="Enter city" value="<%= city ? city : '' %>" required>
+            <button type="submit">Search</button>
+        </form>
+
+        <% if (error) { %>
+            <p class="error"><%= error %></p>
+        <% } %>
+
+        <div class="weather-info">
+            <% if (weather) { %>
+                <h2>Weather in <%= weather.name %>, <%= weather.sys.country %></h2>
+                <p><img src="https://openweathermap.org/img/wn/<%= weather.weather[0].icon %>@2x.png" alt="weather icon"> <%= weather.weather[0].description %></p>
+                <ul>
+                    <li>Temperature: <%= weather.main.temp %> °C</li>
+                    <li>Feels like: <%= weather.main.feels_like %> °C</li>
+                    <li>Humidity: <%= weather.main.humidity %> %</li>
+                    <li>Pressure: <%= weather.main.pressure %> hPa</li>
+                    <li>Wind speed: <%= weather.wind.speed %> m/s</li>
+                    <li>Coordinates: [<%= weather.coord.lat %>, <%= weather.coord.lon %>]</li>
+                    <li>The amount of precipitation in the last 3 hours: <%= rain3h %> mm</li>
+                </ul>
+            <% } %>
+        </div>
+
+        <div id="map" style="height: 400px; margin-top: 20px;"></div>
+
+        <div class="news-info">
+            <% if (newsArticles && newsArticles.length > 0) { %>
+                <h2>News about <%= city %>:</h2>
+                <ul>
+                    <% newsArticles.slice(0, 5).forEach(article => { %>
+                        <li>
+                            <a href="<%= article.url %>" target="_blank"><%= article.title %></a>
+                        </li>
+                    <% }) %>
+                </ul>
+            <% } else { %>
+                <p>There is no news for this city.</p>
+            <% } %>
+        </div>
+    </div>
+
+    <footer>
+        <p><center>Adel Sadykova, BDA-2301</center></p>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const lat = <%= weather ? weather.coord.lat : 0 %>;
+            const lon = <%= weather ? weather.coord.lon : 0 %>;
+
+            if (lat && lon) {
+                const map = L.map('map').setView([lat, lon], 13);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: '© OpenStreetMap'
+                }).addTo(map);
+
+                L.marker([lat, lon]).addTo(map)
+                    .bindPopup('<b><%= weather.name %></b><br>Weather: <%= weather.weather[0].description %>')
+                    .openPopup();
+            }
+        });
+    </script>
+</body>
+</html>
