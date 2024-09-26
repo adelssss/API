@@ -33,6 +33,20 @@
                     <li>Coordinates: [<%= weather.coord.lat %>, <%= weather.coord.lon %>]</li>
                     <li>The amount of precipitation in the last 3 hours: <%= rain3h %> mm</li>
                 </ul>
+            <% } else { %>
+                <p>No weather data available for this city.</p>
+            <% } %>
+        </div>
+        
+        <div class="air-quality-info">
+            <% if (airQuality) { %>
+                <h2>Air Quality Information</h2>
+                <ul>
+                    <li>AQI (Air Quality Index): <%= airQuality.aqius %> (US AQI)</li>
+                    <li>Main Pollutant: <%= airQuality.mainus %></li>
+                </ul>
+            <% } else { %>
+                <p>Air quality data is not available.</p>
             <% } %>
         </div>
 
@@ -52,6 +66,7 @@
                 <p>There is no news for this city.</p>
             <% } %>
         </div>
+        
     </div>
 
     <footer>
